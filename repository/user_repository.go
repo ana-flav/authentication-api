@@ -15,7 +15,13 @@ func NewUserRepository (db *sql.DB) *UserRepository{
 	}
 }
 
-func (ur *UserRepository) insertUser(user models.UserModel) (error) {
-	_,err := ur.db.Exec("INSERT INTO user (user, senha) values ($1, $2)", user.Username, user.Password)
-	return  err
+func (ur *UserRepository) insertUser(user models.UserModel) (models.UserModel, error) {
+    var idInsertedUser models.UserModel
+
+    err := ur.db.QueryRow("INSERT INTO user (username, password) VALUES ($1, $2) RETURNING id", user.Username, user.Password).
+        Scan(&idInsertedUser.ID)
+	if err != nil {
+		return models.UserModel{}, err
+	}
+    return idInsertedUser, err
 }

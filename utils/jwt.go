@@ -8,6 +8,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type Jwt interface{
+	GenerateToken(userID uuid.UUID, username string) (string, error)
+	VerifyToken(tokenString string) (jwt.Claims, error)
+}
+
 var secretKey = []byte(getSecretkey())
 
 func getSecretkey() string {
